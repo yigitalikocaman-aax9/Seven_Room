@@ -2,56 +2,59 @@ using UnityEngine;
 
 public class DoorController : MonoBehaviour
 {
-    [Header("Door Settings")]
-    [SerializeField] private float openAngle = 90f;   // Açılma açısı (Dışarı/içeri yönüne göre -90 da yapılabilir)
-    [SerializeField] private float openSpeed = 3f;    // Açılma hızı
-    [SerializeField] private float interactionDistance = 3f; // E tuşuna basabilmek için maksimum mesafe
+    [Header("UI / İkon Ayarı")]
+    public GameObject ePromptObject;
 
-    [Header("UI & Input")]
-    [SerializeField] private KeyCode interactKey = KeyCode.E;
+    [Header("Kapı / Menteşe Ayarları")]
+    public Transform doorHinge;
+    public float openAngle = 90f;
+    public float speed = 2f;
 
+    private bool isNear = false;
     private bool isOpen = false;
-    private Quaternion closedRotation;
-    private Quaternion openRotation;
-    private Transform playerTransform;
+    private Quaternion defaultLocalRotation;
+    private Quaternion targetLocalRotation;
 
-    private void Start()
+    void Start()
     {
-        // Kapının başlangıç rotasyonunu kaydet
-        closedRotation = transform.localRotation;
-        // Hedef açık rotasyonu hesapla (Y ekseninde etrafında döndürme)
-        openRotation = closedRotation * Quaternion.Euler(0f, openAngle, 0f);
+        if (doorHinge == null) doorHinge = transform;
 
-        // Sahnedeki Player objesini Tag üzerinden bul
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
-        if (player != null)
-        {
-            playerTransform = player.transform;
-        }
+        // Dönüşü local (yerel) eksene sabitle
+        defaultLocalRotation = doorHinge.localRotation;
+        targetLocalRotation = defaultLocalRotation * Quaternion.Euler(0, openAngle, 0);
+
+        if (ePromptObject != null)
+            ePromptObject.SetActive(false);
     }
 
-    private void Update()
+    void Update()
     {
-        if (playerTransform == null) return;
-
-        // Karakter ile kapı arasındaki mesafeyi ölç
-        float distance = Vector3.Distance(playerTransform.position, transform.position);
-
-        // Yakındaysa ve E tuşuna basıldıysa kapı durumunu değiştir
-        if (distance <= interactionDistance && Input.GetKeyDown(interactKey))
+        if (isNear && Input.GetKeyDown(KeyCode.E))
         {
             isOpen = !isOpen;
         }
 
-        // Kapıyı yeni açısına Lerp (yumuşak geçiş) ile döndür
-        Quaternion targetRotation = isOpen ? openRotation : closedRotation;
-        transform.localRotation = Quaternion.Slerp(transform.localRotation, targetRotation, Time.deltaTime * openSpeed);
+        Quaternion target = isOpen ? targetLocalRotation : defaultLocalRotation;
+        
+        // localRotation kullanarak parent-child çakışmasını engelle
+        doorHinge.localRotation = Quaternion.Slerp(doorHinge.localRotation, target, Time.deltaTime * speed);
     }
 
-    // Scene ekranında etkileşim mesafesini sarı küre olarak görmek için
-    private void OnDrawGizmosSelected()
+    private void OnTriggerEnter(Collider other)
     {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, interactionDistance);
+        if (other.CompareTag("Player"))
+        {
+            isNear = true;
+            if (ePromptObject != null) ePromptObject.SetActive(true);
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            isNear = false;
+            if (ePromptObject != null) ePromptObject.SetActive(false);
+        }
     }
 }
