@@ -10,6 +10,10 @@ public class DoorController : MonoBehaviour
     public float openAngle = 90f;
     public float speed = 2f;
 
+    [Header("Ses Ayarları")]
+    public AudioSource audioSource;
+    public AudioClip creakSound; // Kapı gıcırdama sesi
+
     private bool isNear = false;
     private bool isOpen = false;
     private Quaternion defaultLocalRotation;
@@ -25,6 +29,10 @@ public class DoorController : MonoBehaviour
 
         if (ePromptObject != null)
             ePromptObject.SetActive(false);
+
+        // AudioSource atanmamışsa aynı objeden otomatik çek
+        if (audioSource == null)
+            audioSource = GetComponent<AudioSource>();
     }
 
     void Update()
@@ -32,6 +40,12 @@ public class DoorController : MonoBehaviour
         if (isNear && Input.GetKeyDown(KeyCode.E))
         {
             isOpen = !isOpen;
+
+            // Kapı tetiklendiğinde gıcırtı sesini çal
+            if (audioSource != null && creakSound != null)
+            {
+                audioSource.PlayOneShot(creakSound);
+            }
         }
 
         Quaternion target = isOpen ? targetLocalRotation : defaultLocalRotation;
