@@ -901,7 +901,7 @@ MonoBehaviour:
   walkSpeed: 2
   runSpeed: 5
   gravity: -19.62
-  jumpHeight: 1.2
+  jumpHeight: 0
 --- !u!1 &337472515
 GameObject:
   m_ObjectHideFlags: 0
