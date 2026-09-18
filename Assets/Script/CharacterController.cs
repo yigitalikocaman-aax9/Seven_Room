@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
-public class FPSController : MonoBehaviour
+public class FpsController : MonoBehaviour
 {
     [Header("Fare Bakış Ayarları")]
     public Transform playerCamera;
