@@ -5,6 +5,10 @@ public class DoorController : MonoBehaviour
     [Header("UI / İkon Ayarı")]
     public GameObject ePromptObject;
 
+    [Header("Kilit Sistemi")]
+    [Tooltip("Tik işaretliyse kapı kilitli başlar, E butonu gözükmez")]
+    public bool isLocked = false; 
+
     [Header("Kapı / Menteşe Ayarları")]
     public Transform doorHinge;
     public float openAngle = 90f;
@@ -37,7 +41,8 @@ public class DoorController : MonoBehaviour
 
     void Update()
     {
-        if (isNear && Input.GetKeyDown(KeyCode.E))
+        // Kapı KİLİTLİ DEĞİLSE ve oyuncu yakındaysa E'ye basılınca çalışır
+        if (!isLocked && isNear && Input.GetKeyDown(KeyCode.E))
         {
             isOpen = !isOpen;
 
@@ -59,7 +64,12 @@ public class DoorController : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             isNear = true;
-            if (ePromptObject != null) ePromptObject.SetActive(true);
+
+            // Sadece kapı kilitli değilse E butonunu göster
+            if (!isLocked && ePromptObject != null)
+            {
+                ePromptObject.SetActive(true);
+            }
         }
     }
 
@@ -69,6 +79,18 @@ public class DoorController : MonoBehaviour
         {
             isNear = false;
             if (ePromptObject != null) ePromptObject.SetActive(false);
+        }
+    }
+
+    // --- NOT OKUNDUĞUNDA BURA ÇAĞRILACAK ---
+    public void UnlockDoor()
+    {
+        isLocked = false;
+
+        // Eğer oyuncu zaten kapının collider'ı içindeyse E butonunu anında görünür yap
+        if (isNear && ePromptObject != null)
+        {
+            ePromptObject.SetActive(true);
         }
     }
 }
