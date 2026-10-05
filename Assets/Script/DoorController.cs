@@ -82,7 +82,7 @@ public class DoorController : MonoBehaviour
         }
     }
 
-    // --- NOT OKUNDUĞUNDA BURA ÇAĞRILACAK ---
+    // --- NOT OKUNDUĞUNDA ÇAĞRILACAK METHOTLAR ---
     public void UnlockDoor()
     {
         isLocked = false;
@@ -92,5 +92,11 @@ public class DoorController : MonoBehaviour
         {
             ePromptObject.SetActive(true);
         }
+    }
+
+    // 4. Kapı için özel olarak çağırmak istersen bu ismi de kullanabilirsin
+    public void UnlockDoor4()
+    {
+        UnlockDoor();
     }
 }
