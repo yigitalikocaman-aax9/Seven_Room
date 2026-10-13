@@ -1,4 +1,6 @@
+using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using TMPro;
 
 public class NoteSystem : MonoBehaviour
@@ -14,10 +16,16 @@ public class NoteSystem : MonoBehaviour
 
     [Header("Gerekli Baglantilar")]
     public DoorController doorToUnlock;
-    public PlateInteraction plateScript;             // Tabak Script'i (Varsa)
-    public LaptopInteraction laptopScript;           // Laptop Script'i (Varsa)
-    public LightswitchInteraction lightswitchScript; // Işık Düğmesi Script'i (Varsa)
-    public YorganInteraction yorganScript;           // Yorgan Script'i (Varsa)
+    public PlateInteraction plateScript;             
+    public LaptopInteraction laptopScript;           
+    public LightswitchInteraction lightswitchScript; 
+    public YorganInteraction yorganScript;           
+
+    [Header("Gizli Not ve Final Ayarları")]
+    public bool isSecretNote = false;
+    public string endGameSceneName = "StartScene";    
+    public CanvasGroup fadeCanvasGroup;              
+    public float fadeDuration = 2.0f;                
 
     private bool isPlayerInsideTrigger = false;
     private bool isNoteOpen = false;
@@ -30,6 +38,37 @@ public class NoteSystem : MonoBehaviour
 
         if (interactPromptUI != null) interactPromptUI.SetActive(false);
         if (notePanelUI != null) notePanelUI.SetActive(false);
+
+        // YALNIZCA GİZLİ NOT İSE GÖRÜNÜRLÜK KONTROLÜ YAP
+        if (isSecretNote)
+        {
+            if (PlayerPrefs.GetInt("GameFinished", 0) == 1)
+            {
+                SetNoteVisibility(true);
+            }
+            else
+            {
+                SetNoteVisibility(false);
+            }
+        }
+    }
+
+    private void SetNoteVisibility(bool visible)
+    {
+        Renderer rend = GetComponent<Renderer>();
+        Collider col = GetComponent<Collider>();
+
+        if (rend != null) rend.enabled = visible;
+        if (col != null) col.enabled = visible;
+
+        foreach (Renderer r in GetComponentsInChildren<Renderer>())
+        {
+            r.enabled = visible;
+        }
+        foreach (Collider c in GetComponentsInChildren<Collider>())
+        {
+            c.enabled = visible;
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -63,15 +102,21 @@ public class NoteSystem : MonoBehaviour
 
     private void Update()
     {
+        // Gizli not açıldıysa kapatmayı engelle
+        if (isSecretNote && isNoteOpen) return;
+
+        // E TUŞU İLE AÇMA
         if (!isAlreadyRead && isPlayerInsideTrigger && !isNoteOpen && Input.GetKeyDown(KeyCode.E))
         {
             OpenNote();
         }
+        // KAPATMA
         else if (isNoteOpen && (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.E)))
         {
             CloseNote();
         }
 
+        // TIKLAYARAK AÇMA (Raycast)
         if (!isAlreadyRead && !isNoteOpen && Input.GetMouseButtonDown(0))
         {
             CheckDirectClick();
@@ -106,9 +151,19 @@ public class NoteSystem : MonoBehaviour
         if (notePanelUI != null) notePanelUI.SetActive(true);
         if (noteTextUI != null) noteTextUI.text = noteContent;
 
+        // Kapıyı aç/tetikle
+        TriggerDoor();
+
         Time.timeScale = 0f;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+
+        // Yalnızca gizli not ise final sürecini başlat
+        if (isSecretNote)
+        {
+            isAlreadyRead = true;
+            StartCoroutine(SecretNoteEndRoutine());
+        }
     }
 
     public void CloseNote()
@@ -123,37 +178,51 @@ public class NoteSystem : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        // TABAK GERİ İNSİN
-        if (plateScript != null)
-        {
-            plateScript.LowerPlate();
-        }
+        // Nesne etkileşimleri
+        if (plateScript != null) plateScript.LowerPlate();
+        if (laptopScript != null) laptopScript.LowerLaptop();
+        if (lightswitchScript != null) lightswitchScript.MoveBack();
+        if (yorganScript != null) yorganScript.LowerYorgan();
 
-        // LAPTOP GERİ İNSİN
-        if (laptopScript != null)
-        {
-            laptopScript.LowerLaptop();
-        }
-
-        // IŞIK DÜĞMESİ GERİ ÇEKİLSİN
-        if (lightswitchScript != null)
-        {
-            lightswitchScript.MoveBack();
-        }
-
-        // YORGAN GERİ İNSİN
-        if (yorganScript != null)
-        {
-            yorganScript.LowerYorgan();
-        }
-
-        if (doorToUnlock != null)
-        {
-            doorToUnlock.UnlockDoor4();
-            Debug.Log("Not okundu. Obje yerine çekildi ve kapı açıldı!");
-        }
+        TriggerDoor();
 
         Collider col = GetComponent<Collider>();
         if (col != null) col.enabled = false;
+    }
+
+    private void TriggerDoor()
+    {
+        if (doorToUnlock != null)
+        {
+            doorToUnlock.UnlockDoor4();
+            Debug.Log("Not okundu, kapı açıldı!");
+        }
+    }
+
+    private IEnumerator SecretNoteEndRoutine()
+    {
+        yield return new WaitForSecondsRealtime(8f);
+
+        if (fadeCanvasGroup != null)
+        {
+            float timer = 0f;
+            fadeCanvasGroup.blocksRaycasts = true;
+
+            while (timer < fadeDuration)
+            {
+                timer += Time.unscaledDeltaTime;
+                fadeCanvasGroup.alpha = Mathf.Lerp(0f, 1f, timer / fadeDuration);
+                yield return null;
+            }
+
+            fadeCanvasGroup.alpha = 1f;
+        }
+
+        Time.timeScale = 1f;
+
+        if (!string.IsNullOrEmpty(endGameSceneName))
+        {
+            SceneManager.LoadScene(endGameSceneName);
+        }
     }
 }

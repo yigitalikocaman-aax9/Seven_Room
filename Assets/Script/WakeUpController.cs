@@ -3,84 +3,166 @@ using UnityEngine;
 
 public class WakeUpController : MonoBehaviour
 {
-    [Header("UI & Kamera / Karakter")]
-    public CanvasGroup fadeCanvasGroup;
-    public Transform playerTransform;
-    public MonoBehaviour playerMovementScript; // Karakter yürüme/bakma scriptin
+    [Header("Test Modu")]
+    [Tooltip("İşaretlerseniz diğer sahneden gelmeseniz bile bu sahnede Play'e basınca uyanma çalışır.")]
+    public bool forceWakeUpInEditor = true;
 
-    [Header("Pozisyonlar")]
-    public Transform bedSleepPoint;  // Yatakta yatış noktası
-    public Transform bedStandPoint;  // Yatağın ucunda ayağa kalkış noktası
+    [Header("UI & Göz Kırpma Ayarları")]
+    public GameObject fadePanelObject;    
+    public CanvasGroup blinkCanvasGroup;  
+    public int blinkCount = 3;            
+    public float blinkSpeed = 1.5f;       
 
-    [Header("Göz Kırpma Ayarları")]
-    public int blinkCount = 3;         // Kaç kere göz açıp kapanacak
-    public float blinkDuration = 0.8f; // Göz açılıp kapanma hızı
+    [Header("Oyuncu ve Yatak Pozisyonları")]
+    public Transform playerTransform;     
+    public Transform bedSleepTransform;   // Yatağın üzerindeki yatış noktası
+    public Transform bedStandTransform;   // Yataktan kalkınca duracağı nokta
+    public MonoBehaviour playerMovementScript; 
+
+    [Header("Kamera Ayarları")]
+    public Transform playerCameraTransform; // Main Camera Transform'u
+    [Tooltip("Yatakta yatarken bakış açısı (-90 X açısı tam tavana/yukarı baktırır)")]
+    public Vector3 sleepCameraRotation = new Vector3(-90f, 0f, 0f); 
+
+    [Header("Ayağa Kalkma Ayarları")]
+    public float standUpSpeed = 1.2f;     // Yataktan kalkıp doğrulma süresi hızı
+
+    [Header("Müzik Ayarı")]
+    [Tooltip("Uyanırken kapatılacak arka plan müziği objesi")]
+    public GameObject backgroundMusicObject;
+
+    private CharacterController charController;
 
     private void Start()
     {
-        StartCoroutine(WakeUpSequence());
+        if (playerTransform != null)
+        {
+            charController = playerTransform.GetComponent<CharacterController>();
+        }
+
+        // Yalnızca siyah kapıdan geçildiyse uyanma sekansını ve müzik kapatmayı çalıştır
+        if (forceWakeUpInEditor || GameSession.hasWokenUpFromDoor)
+        {
+            // Siyah kapıdan dönüldüyse arka plan müziğini anında kapat
+            if (backgroundMusicObject != null)
+            {
+                backgroundMusicObject.SetActive(false);
+            }
+
+            StartCoroutine(WakeUpSequence());
+        }
+        else
+        {
+            if (fadePanelObject != null)
+                fadePanelObject.SetActive(false);
+        }
     }
 
     private IEnumerator WakeUpSequence()
     {
-        // 1. Ekran Simsiyah Başlar & Karakter Yatakta Yatış Pozisyonuna Geçer
-        if (fadeCanvasGroup != null) fadeCanvasGroup.alpha = 1f;
+        // 1. FADE PANELİ AÇ VE SİYAH YAP
+        if (fadePanelObject != null)
+            fadePanelObject.SetActive(true);
+
+        if (blinkCanvasGroup != null)
+            blinkCanvasGroup.alpha = 1f;
+
+        // 2. KONTROLLERİ VE FİZİĞİ KAPAT
         if (playerMovementScript != null) playerMovementScript.enabled = false;
+        if (charController != null) charController.enabled = false;
 
-        if (playerTransform != null && bedSleepPoint != null)
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
+        // 3. YATAĞA YERLEŞTİR VE KAMERAYI TAVANA ÇEVİR
+        if (playerTransform != null && bedSleepTransform != null)
         {
-            playerTransform.position = bedSleepPoint.position;
-            playerTransform.rotation = bedSleepPoint.rotation;
+            playerTransform.position = bedSleepTransform.position;
+            playerTransform.rotation = bedSleepTransform.rotation;
         }
 
-        yield return new WaitForSeconds(1.0f); // 1 saniye siyah ekranda bekle
-
-        // 2. Göz Açılıp Kapanma (Uyku Sersemliği)
-        for (int i = 0; i < blinkCount; i++)
+        if (playerCameraTransform != null)
         {
-            // Göz hafifçe açılır
-            float timer = 0f;
-            while (timer < blinkDuration)
-            {
-                timer += Time.deltaTime;
-                if (fadeCanvasGroup != null)
-                    fadeCanvasGroup.alpha = Mathf.SmoothStep(1f, 0.2f, timer / blinkDuration);
-                yield return null;
-            }
-
-            // Göz tekrar kapanır
-            timer = 0f;
-            while (timer < blinkDuration)
-            {
-                timer += Time.deltaTime;
-                if (fadeCanvasGroup != null)
-                    fadeCanvasGroup.alpha = Mathf.SmoothStep(0.2f, 1f, timer / blinkDuration);
-                yield return null;
-            }
-        }
-
-        // 3. Ekran Son Kez Simsiyahken Karakter Yatağın Başında Ayağa Kalkar
-        if (playerTransform != null && bedStandPoint != null)
-        {
-            playerTransform.position = bedStandPoint.position;
-            playerTransform.rotation = bedStandPoint.rotation;
+            playerCameraTransform.localRotation = Quaternion.Euler(sleepCameraRotation);
         }
 
         yield return new WaitForSeconds(0.4f);
 
-        // 4. Gözler Tamamen Açılır
-        float finalTimer = 0f;
-        while (finalTimer < 1.2f)
+        // 4. GÖZ KIRPMA EFEKTİ
+        for (int i = 0; i < blinkCount; i++)
         {
-            finalTimer += Time.deltaTime;
-            if (fadeCanvasGroup != null)
-                fadeCanvasGroup.alpha = Mathf.SmoothStep(1f, 0f, finalTimer / 1.2f);
+            float t = 0f;
+            while (t < 1f)
+            {
+                t += Time.deltaTime * blinkSpeed;
+                if (blinkCanvasGroup != null)
+                    blinkCanvasGroup.alpha = Mathf.Lerp(1f, 0.15f, t);
+                yield return null;
+            }
+
+            t = 0f;
+            while (t < 1f)
+            {
+                t += Time.deltaTime * blinkSpeed;
+                if (blinkCanvasGroup != null)
+                    blinkCanvasGroup.alpha = Mathf.Lerp(0.15f, 1f, t);
+                yield return null;
+            }
+        }
+
+        // 5. YATAKTAN KALKMA & DOĞRULMA ANİMASYONU
+        Vector3 startPos = bedSleepTransform.position;
+        Quaternion startRot = bedSleepTransform.rotation;
+        
+        Vector3 targetPos = bedStandTransform.position;
+        Quaternion targetRot = bedStandTransform.rotation;
+
+        float standT = 0f;
+
+        while (standT < 1f)
+        {
+            standT += Time.deltaTime * standUpSpeed;
+
+            if (playerTransform != null && bedSleepTransform != null && bedStandTransform != null)
+            {
+                playerTransform.position = Vector3.Lerp(startPos, targetPos, standT);
+                playerTransform.rotation = Quaternion.Slerp(startRot, targetRot, standT);
+            }
+
+            if (blinkCanvasGroup != null)
+                blinkCanvasGroup.alpha = Mathf.Lerp(1f, 0f, standT);
+
+            if (playerCameraTransform != null)
+            {
+                playerCameraTransform.localRotation = Quaternion.Slerp(
+                    Quaternion.Euler(sleepCameraRotation), 
+                    Quaternion.identity, 
+                    standT
+                );
+            }
+
             yield return null;
         }
 
-        if (fadeCanvasGroup != null) fadeCanvasGroup.alpha = 0f;
+        // 6. SON POZİSYONLARI KESİNLEŞTİR VE ROTASYONU ZORLA EŞİTLE
+        if (blinkCanvasGroup != null) blinkCanvasGroup.alpha = 0f;
+        if (fadePanelObject != null) fadePanelObject.SetActive(false);
 
-        // 5. Karakter Kontrolü Açılır
+        if (playerTransform != null && bedStandTransform != null)
+        {
+            playerTransform.position = bedStandTransform.position;
+            playerTransform.rotation = bedStandTransform.rotation;
+        }
+
+        if (playerCameraTransform != null)
+        {
+            playerCameraTransform.localRotation = Quaternion.identity;
+        }
+
+        // 7. KONTROLLERİ GERİ AÇMADAN ÖNCE SIFIRLAMA
+        yield return new WaitForEndOfFrame();
+
+        if (charController != null) charController.enabled = true;
         if (playerMovementScript != null) playerMovementScript.enabled = true;
     }
 }

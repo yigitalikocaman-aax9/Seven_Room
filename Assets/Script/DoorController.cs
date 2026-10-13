@@ -44,19 +44,36 @@ public class DoorController : MonoBehaviour
         // Kapı KİLİTLİ DEĞİLSE ve oyuncu yakındaysa E'ye basılınca çalışır
         if (!isLocked && isNear && Input.GetKeyDown(KeyCode.E))
         {
-            isOpen = !isOpen;
-
-            // Kapı tetiklendiğinde gıcırtı sesini çal
-            if (audioSource != null && creakSound != null)
-            {
-                audioSource.PlayOneShot(creakSound);
-            }
+            ToggleDoor();
         }
 
         Quaternion target = isOpen ? targetLocalRotation : defaultLocalRotation;
         
         // localRotation kullanarak parent-child çakışmasını engelle
         doorHinge.localRotation = Quaternion.Slerp(doorHinge.localRotation, target, Time.deltaTime * speed);
+    }
+
+    public void ToggleDoor()
+    {
+        isOpen = !isOpen;
+
+        // Kapı tetiklendiğinde gıcırtı sesini çal
+        if (audioSource != null && creakSound != null)
+        {
+            audioSource.PlayOneShot(creakSound);
+        }
+    }
+
+    public void OpenDoor()
+    {
+        if (!isOpen)
+        {
+            isOpen = true;
+            if (audioSource != null && creakSound != null)
+            {
+                audioSource.PlayOneShot(creakSound);
+            }
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -94,9 +111,10 @@ public class DoorController : MonoBehaviour
         }
     }
 
-    // 4. Kapı için özel olarak çağırmak istersen bu ismi de kullanabilirsin
+    // 4. Kapı/Siyah kapı için: Hem kilidi açar hem de kapıyı fiziken açar
     public void UnlockDoor4()
     {
         UnlockDoor();
+        OpenDoor();
     }
 }

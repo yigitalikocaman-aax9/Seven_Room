@@ -12,8 +12,8 @@ public class BedSleep : MonoBehaviour
     public string targetSceneName = "Scene/WhitePlace"; 
 
     [Header("Zamanlama Ayarları")]
-    public float eyeCloseDuration = 1.5f; // Gözlerin kapanma süresi
-    public float sleepDuration = 5.0f;    // Siyah ekranda bekleme süresi
+    public float eyeCloseDuration = 1.5f; 
+    public float sleepDuration = 5.0f;    
 
     [Header("Karakter Kontrolü")]
     public MonoBehaviour playerMovementScript; 
@@ -23,6 +23,15 @@ public class BedSleep : MonoBehaviour
 
     private void Start()
     {
+        // Yalnızca siyah kapıdan dönülüp uyanıldıysa yatak etkileşimini kapat
+        if (GameSession.hasWokenUpFromDoor)
+        {
+            if (interactUI != null) interactUI.SetActive(false);
+            Collider col = GetComponent<Collider>();
+            if (col != null) col.enabled = false;
+            return;
+        }
+
         if (interactUI != null) interactUI.SetActive(false);
         if (fadeCanvasGroup != null)
         {
@@ -33,6 +42,8 @@ public class BedSleep : MonoBehaviour
 
     private void Update()
     {
+        if (GameSession.hasWokenUpFromDoor) return;
+
         if (isPlayerInRange && !isSleeping && Input.GetKeyDown(KeyCode.E))
         {
             StartCoroutine(EyeCloseRoutine());
@@ -41,6 +52,8 @@ public class BedSleep : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (GameSession.hasWokenUpFromDoor) return;
+
         if (other.CompareTag("Player"))
         {
             isPlayerInRange = true;
@@ -50,6 +63,8 @@ public class BedSleep : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
+        if (GameSession.hasWokenUpFromDoor) return;
+
         if (other.CompareTag("Player"))
         {
             isPlayerInRange = false;
@@ -64,7 +79,6 @@ public class BedSleep : MonoBehaviour
         if (interactUI != null) interactUI.SetActive(false);
         if (playerMovementScript != null) playerMovementScript.enabled = false;
 
-        // Göz Kapanıyor (Soft Fade In)
         if (fadeCanvasGroup != null)
         {
             fadeCanvasGroup.blocksRaycasts = true;
@@ -73,7 +87,6 @@ public class BedSleep : MonoBehaviour
             while (timer < eyeCloseDuration)
             {
                 timer += Time.deltaTime;
-                // Soft/Yumuşak geçiş için SmoothStep kullanımı
                 float progress = timer / eyeCloseDuration;
                 fadeCanvasGroup.alpha = Mathf.SmoothStep(0f, 1f, progress);
                 yield return null;
@@ -82,10 +95,8 @@ public class BedSleep : MonoBehaviour
             fadeCanvasGroup.alpha = 1f;
         }
 
-        // 5 Saniye Uykuda Bekleme
         yield return new WaitForSeconds(sleepDuration);
 
-        // Yeni Sahneye Geçiş
         if (!string.IsNullOrEmpty(targetSceneName))
         {
             SceneManager.LoadScene(targetSceneName);
