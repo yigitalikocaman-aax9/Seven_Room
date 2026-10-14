@@ -12,11 +12,18 @@ public class BedSleep : MonoBehaviour
     public string targetSceneName = "Scene/WhitePlace"; 
 
     [Header("Zamanlama Ayarları")]
-    public float eyeCloseDuration = 1.5f; 
-    public float sleepDuration = 5.0f;    
+    public float eyeCloseDuration = 2.0f; 
+    public float sleepDuration = 2.0f;    
 
-    [Header("Karakter Kontrolü")]
+    [Header("Karakter ve Yatak Dönüşümü")]
     public MonoBehaviour playerMovementScript; 
+    public Transform playerTransform; // Oyuncunun veya Kameranın Transform'u
+    public Transform sleepPoint;       // Yatağın üzerindeki hedef pozisyon (SleepPoint)
+    public float layDownSpeed = 2.0f;  
+
+    [Header("Yatış Yönü Ayarı")]
+    [Tooltip("Sağa doğru devrilme açısı (Derece)")]
+    public float rightTiltAngle = -90f; // Sağa yatması için Z ekseninde rotasyon
 
     private bool isPlayerInRange = false;
     private bool isSleeping = false;
@@ -79,21 +86,43 @@ public class BedSleep : MonoBehaviour
         if (interactUI != null) interactUI.SetActive(false);
         if (playerMovementScript != null) playerMovementScript.enabled = false;
 
+        Vector3 startPos = playerTransform != null ? playerTransform.position : Vector3.zero;
+        Quaternion startRot = playerTransform != null ? playerTransform.rotation : Quaternion.identity;
+
+        // SleepPoint rotasyonunun üzerine tam sağa devrilme açısını kodla ekliyoruz
+        Quaternion baseTargetRot = sleepPoint != null ? sleepPoint.rotation : startRot;
+        Quaternion targetRot = baseTargetRot * Quaternion.Euler(0, 0, rightTiltAngle);
+
         if (fadeCanvasGroup != null)
         {
             fadeCanvasGroup.blocksRaycasts = true;
-            float timer = 0f;
+        }
 
-            while (timer < eyeCloseDuration)
+        float timer = 0f;
+
+        while (timer < eyeCloseDuration)
+        {
+            timer += Time.deltaTime;
+            float progress = timer / eyeCloseDuration;
+            float smoothProgress = Mathf.SmoothStep(0f, 1f, progress);
+
+            // Oyuncuyu SleepPoint'e kaydırıp sağa doğru yatırır
+            if (playerTransform != null && sleepPoint != null)
             {
-                timer += Time.deltaTime;
-                float progress = timer / eyeCloseDuration;
-                fadeCanvasGroup.alpha = Mathf.SmoothStep(0f, 1f, progress);
-                yield return null;
+                playerTransform.position = Vector3.Lerp(startPos, sleepPoint.position, smoothProgress);
+                playerTransform.rotation = Quaternion.Slerp(startRot, targetRot, smoothProgress);
             }
 
-            fadeCanvasGroup.alpha = 1f;
+            // Göz kapanma (Fade) etkisi
+            if (fadeCanvasGroup != null)
+            {
+                fadeCanvasGroup.alpha = smoothProgress;
+            }
+
+            yield return null;
         }
+
+        if (fadeCanvasGroup != null) fadeCanvasGroup.alpha = 1f;
 
         yield return new WaitForSeconds(sleepDuration);
 

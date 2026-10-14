@@ -1302,13 +1302,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 361435719}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 1, z: -0, w: 0}
+  m_LocalRotation: {x: 0, y: 0.93507344, z: 0.35445422, w: 0}
   m_LocalPosition: {x: 0.0112, y: 0.583, z: -0.008}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 270870179}
-  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+  m_LocalEulerAnglesHint: {x: -41.52, y: 180, z: 0}
 --- !u!81 &361435724
 AudioListener:
   m_ObjectHideFlags: 0
@@ -6204,13 +6204,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1481605829}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 6.765, y: 2.889, z: 15.531}
+  m_LocalRotation: {x: -0.5, y: 0.5, z: 0.5, w: 0.5}
+  m_LocalPosition: {x: 6.296, y: 2.734, z: 15.531}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
+  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 90}
 --- !u!1 &1498298857
 GameObject:
   m_ObjectHideFlags: 0
@@ -10849,6 +10849,10 @@ MonoBehaviour:
   eyeCloseDuration: 1.5
   sleepDuration: 5
   playerMovementScript: {fileID: 270870180}
+  playerTransform: {fileID: 270870179}
+  sleepPoint: {fileID: 1481605830}
+  layDownSpeed: 2
+  rightTiltAngle: -90
 --- !u!65 &919132147585705460
 BoxCollider:
   m_ObjectHideFlags: 0
