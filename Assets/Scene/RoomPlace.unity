@@ -3555,6 +3555,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LockedDoor
   audioSource: {fileID: 826986027}
   lockedSound: {fileID: 8300000, guid: 7395c3b2480c11c408aacfd37b315f20, type: 3}
+  secondSound: {fileID: 8300000, guid: 12262f4ff1e716647a5788be3ee99bdd, type: 3}
+  secondSoundVolume: 1.3
+  secondSoundDelay: 1
   interactUI: {fileID: 1389058569}
 --- !u!82 &826986027
 AudioSource:
@@ -4081,6 +4084,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LockedDoor
   audioSource: {fileID: 826986027}
   lockedSound: {fileID: 8300000, guid: 7395c3b2480c11c408aacfd37b315f20, type: 3}
+  secondSound: {fileID: 8300000, guid: de07f115772603c42ba853a43e951ef2, type: 3}
+  secondSoundVolume: 1.3
+  secondSoundDelay: 1
   interactUI: {fileID: 872109847}
 --- !u!82 &873666298
 AudioSource:
@@ -4998,6 +5004,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LockedDoor
   audioSource: {fileID: 826986027}
   lockedSound: {fileID: 8300000, guid: 7395c3b2480c11c408aacfd37b315f20, type: 3}
+  secondSound: {fileID: 8300000, guid: a269b5749d50a8a469f84dfd932a61b5, type: 3}
+  secondSoundVolume: 2
+  secondSoundDelay: 1
   interactUI: {fileID: 883683695}
 --- !u!82 &1127358492
 AudioSource:
@@ -5717,7 +5726,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 8300000, guid: 2700ca01cecc08241a287e35c8836220, type: 3}
+  m_Resource: {fileID: 8300000, guid: d6e32aae1cc865c4da3d8dc21e091194, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 0.11
   m_Pitch: 1
@@ -6442,14 +6451,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.16470589, g: 0.16470589, b: 0.16470589, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.21176471}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -6707,6 +6716,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LockedDoor
   audioSource: {fileID: 826986027}
   lockedSound: {fileID: 8300000, guid: 7395c3b2480c11c408aacfd37b315f20, type: 3}
+  secondSound: {fileID: 8300000, guid: 94bab4eae1b080549a54a1a8bdf064b6, type: 3}
+  secondSoundVolume: 1.3
+  secondSoundDelay: 1
   interactUI: {fileID: 1161552037}
 --- !u!82 &1665619795
 AudioSource:
@@ -7735,7 +7747,7 @@ MonoBehaviour:
   notePanelUI: {fileID: 1964362690}
   noteTextUI: {fileID: 412964941}
   noteContent: "OYNADI\u011EINIZ \u0130\xC7\u0130N TE\u015EEKK\xDCRLER"
-  endGameSceneName: StartScene
+  endGameSceneName: FinishScene
   fadeCanvasGroup: {fileID: 809029922}
   fadeDuration: 2
 --- !u!1 &1925274479
@@ -8764,6 +8776,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LockedDoor
   audioSource: {fileID: 826986027}
   lockedSound: {fileID: 8300000, guid: 7395c3b2480c11c408aacfd37b315f20, type: 3}
+  secondSound: {fileID: 8300000, guid: c226dd0b056017d43864e95512ae78d4, type: 3}
+  secondSoundVolume: 1.3
+  secondSoundDelay: 1
   interactUI: {fileID: 269588826}
 --- !u!82 &2125743383
 AudioSource:
@@ -8786,7 +8801,7 @@ AudioSource:
   SpatializePostEffects: 0
   Priority: 128
   DopplerLevel: 1
-  MinDistance: 1
+  MinDistance: 1.7641945
   MaxDistance: 500
   Pan2D: 0
   rolloffMode: 0
@@ -26115,6 +26130,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LockedDoor
   audioSource: {fileID: 826986027}
   lockedSound: {fileID: 8300000, guid: 7395c3b2480c11c408aacfd37b315f20, type: 3}
+  secondSound: {fileID: 8300000, guid: a7993ceceace3ce4a9d38358cea64594, type: 3}
+  secondSoundVolume: 1.3
+  secondSoundDelay: 1
   interactUI: {fileID: 118164779}
 --- !u!82 &8108018137836453992
 AudioSource:
