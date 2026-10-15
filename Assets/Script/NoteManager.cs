@@ -13,7 +13,7 @@ public class NoteManager : MonoBehaviour
         noteTextUI.text = message;
         notePanel.SetActive(true);
         
-        // Oyunu durdur ve mouse imlecini serbest bırak
+       
         Time.timeScale = 0f;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
@@ -25,7 +25,7 @@ public class NoteManager : MonoBehaviour
     {
         notePanel.SetActive(false);
         
-        // Oyunu devam ettir ve mouse imlecini tekrar kilitle
+       
         Time.timeScale = 1f;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;

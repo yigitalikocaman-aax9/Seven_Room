@@ -39,7 +39,7 @@ public class NoteSystem : MonoBehaviour
         if (interactPromptUI != null) interactPromptUI.SetActive(false);
         if (notePanelUI != null) notePanelUI.SetActive(false);
 
-        // YALNIZCA GİZLİ NOT İSE GÖRÜNÜRLÜK KONTROLÜ YAP
+        
         if (isSecretNote)
         {
             if (PlayerPrefs.GetInt("GameFinished", 0) == 1)
@@ -102,21 +102,21 @@ public class NoteSystem : MonoBehaviour
 
     private void Update()
     {
-        // Gizli not açıldıysa kapatmayı engelle
+       
         if (isSecretNote && isNoteOpen) return;
 
-        // E TUŞU İLE AÇMA
+        
         if (!isAlreadyRead && isPlayerInsideTrigger && !isNoteOpen && Input.GetKeyDown(KeyCode.E))
         {
             OpenNote();
         }
-        // KAPATMA
+       
         else if (isNoteOpen && (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.E)))
         {
             CloseNote();
         }
 
-        // TIKLAYARAK AÇMA (Raycast)
+        
         if (!isAlreadyRead && !isNoteOpen && Input.GetMouseButtonDown(0))
         {
             CheckDirectClick();
@@ -151,14 +151,14 @@ public class NoteSystem : MonoBehaviour
         if (notePanelUI != null) notePanelUI.SetActive(true);
         if (noteTextUI != null) noteTextUI.text = noteContent;
 
-        // Kapıyı aç/tetikle
+       
         TriggerDoor();
 
         Time.timeScale = 0f;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
-        // Yalnızca gizli not ise final sürecini başlat
+        
         if (isSecretNote)
         {
             isAlreadyRead = true;
@@ -178,7 +178,7 @@ public class NoteSystem : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        // Nesne etkileşimleri
+       
         if (plateScript != null) plateScript.LowerPlate();
         if (laptopScript != null) laptopScript.LowerLaptop();
         if (lightswitchScript != null) lightswitchScript.MoveBack();
@@ -195,7 +195,7 @@ public class NoteSystem : MonoBehaviour
         if (doorToUnlock != null)
         {
             doorToUnlock.UnlockDoor4();
-            Debug.Log("Not okundu, kapı açıldı!");
+            
         }
     }
 

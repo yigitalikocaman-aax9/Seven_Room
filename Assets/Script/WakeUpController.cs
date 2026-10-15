@@ -15,17 +15,17 @@ public class WakeUpController : MonoBehaviour
 
     [Header("Oyuncu ve Yatak Pozisyonları")]
     public Transform playerTransform;     
-    public Transform bedSleepTransform;   // Yatağın üzerindeki yatış noktası
-    public Transform bedStandTransform;   // Yataktan kalkınca duracağı nokta
+    public Transform bedSleepTransform;   
+    public Transform bedStandTransform;   
     public MonoBehaviour playerMovementScript; 
 
     [Header("Kamera Ayarları")]
-    public Transform playerCameraTransform; // Main Camera Transform'u
+    public Transform playerCameraTransform; 
     [Tooltip("Yatakta yatarken bakış açısı (-90 X açısı tam tavana/yukarı baktırır)")]
     public Vector3 sleepCameraRotation = new Vector3(-90f, 0f, 0f); 
 
     [Header("Ayağa Kalkma Ayarları")]
-    public float standUpSpeed = 1.2f;     // Yataktan kalkıp doğrulma süresi hızı
+    public float standUpSpeed = 1.2f;    
 
     [Header("Müzik Ayarı")]
     [Tooltip("Uyanırken kapatılacak arka plan müziği objesi")]
@@ -40,10 +40,10 @@ public class WakeUpController : MonoBehaviour
             charController = playerTransform.GetComponent<CharacterController>();
         }
 
-        // Yalnızca siyah kapıdan geçildiyse uyanma sekansını ve müzik kapatmayı çalıştır
+        
         if (forceWakeUpInEditor || GameSession.hasWokenUpFromDoor)
         {
-            // Siyah kapıdan dönüldüyse arka plan müziğini anında kapat
+           
             if (backgroundMusicObject != null)
             {
                 backgroundMusicObject.SetActive(false);
@@ -60,21 +60,21 @@ public class WakeUpController : MonoBehaviour
 
     private IEnumerator WakeUpSequence()
     {
-        // 1. FADE PANELİ AÇ VE SİYAH YAP
+        
         if (fadePanelObject != null)
             fadePanelObject.SetActive(true);
 
         if (blinkCanvasGroup != null)
             blinkCanvasGroup.alpha = 1f;
 
-        // 2. KONTROLLERİ VE FİZİĞİ KAPAT
+        
         if (playerMovementScript != null) playerMovementScript.enabled = false;
         if (charController != null) charController.enabled = false;
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        // 3. YATAĞA YERLEŞTİR VE KAMERAYI TAVANA ÇEVİR
+        
         if (playerTransform != null && bedSleepTransform != null)
         {
             playerTransform.position = bedSleepTransform.position;
@@ -110,7 +110,7 @@ public class WakeUpController : MonoBehaviour
             }
         }
 
-        // 5. YATAKTAN KALKMA & DOĞRULMA ANİMASYONU
+       
         Vector3 startPos = bedSleepTransform.position;
         Quaternion startRot = bedSleepTransform.rotation;
         
@@ -144,7 +144,7 @@ public class WakeUpController : MonoBehaviour
             yield return null;
         }
 
-        // 6. SON POZİSYONLARI KESİNLEŞTİR VE ROTASYONU ZORLA EŞİTLE
+        
         if (blinkCanvasGroup != null) blinkCanvasGroup.alpha = 0f;
         if (fadePanelObject != null) fadePanelObject.SetActive(false);
 
@@ -159,7 +159,7 @@ public class WakeUpController : MonoBehaviour
             playerCameraTransform.localRotation = Quaternion.identity;
         }
 
-        // 7. KONTROLLERİ GERİ AÇMADAN ÖNCE SIFIRLAMA
+       
         yield return new WaitForEndOfFrame();
 
         if (charController != null) charController.enabled = true;

@@ -4,8 +4,8 @@ using UnityEngine.UI;
 public class CrosshairManager : MonoBehaviour
 {
     public Image crosshairImage;
-    public Sprite defaultDot;      // Normal nokta ikonu
-    public Sprite interactHand;     // El ikonu
+    public Sprite defaultDot;      
+    public Sprite interactHand;     
     public float interactDistance = 3f;
 
     void Update()
@@ -13,10 +13,10 @@ public class CrosshairManager : MonoBehaviour
         Ray ray = new Ray(transform.position, transform.forward);
         RaycastHit hit;
 
-        // Kameranın tam ortasından ileriye ray atar
+        
         if (Physics.Raycast(ray, out hit, interactDistance))
         {
-            // Etkileşime geçilebilir nesnelere "Interactable" Tag'i verebilirsin
+            
             if (hit.collider.CompareTag("Interactable"))
             {
                 crosshairImage.sprite = interactHand;

@@ -17,20 +17,20 @@ public class BedSleep : MonoBehaviour
 
     [Header("Karakter ve Yatak Dönüşümü")]
     public MonoBehaviour playerMovementScript; 
-    public Transform playerTransform; // Oyuncunun veya Kameranın Transform'u
-    public Transform sleepPoint;       // Yatağın üzerindeki hedef pozisyon (SleepPoint)
+    public Transform playerTransform; 
+    public Transform sleepPoint;       
     public float layDownSpeed = 2.0f;  
 
     [Header("Yatış Yönü Ayarı")]
     [Tooltip("Sağa doğru devrilme açısı (Derece)")]
-    public float rightTiltAngle = -90f; // Sağa yatması için Z ekseninde rotasyon
+    public float rightTiltAngle = -90f; 
 
     private bool isPlayerInRange = false;
     private bool isSleeping = false;
 
     private void Start()
     {
-        // Yalnızca siyah kapıdan dönülüp uyanıldıysa yatak etkileşimini kapat
+        
         if (GameSession.hasWokenUpFromDoor)
         {
             if (interactUI != null) interactUI.SetActive(false);
@@ -89,7 +89,7 @@ public class BedSleep : MonoBehaviour
         Vector3 startPos = playerTransform != null ? playerTransform.position : Vector3.zero;
         Quaternion startRot = playerTransform != null ? playerTransform.rotation : Quaternion.identity;
 
-        // SleepPoint rotasyonunun üzerine tam sağa devrilme açısını kodla ekliyoruz
+       
         Quaternion baseTargetRot = sleepPoint != null ? sleepPoint.rotation : startRot;
         Quaternion targetRot = baseTargetRot * Quaternion.Euler(0, 0, rightTiltAngle);
 
@@ -106,14 +106,14 @@ public class BedSleep : MonoBehaviour
             float progress = timer / eyeCloseDuration;
             float smoothProgress = Mathf.SmoothStep(0f, 1f, progress);
 
-            // Oyuncuyu SleepPoint'e kaydırıp sağa doğru yatırır
+           
             if (playerTransform != null && sleepPoint != null)
             {
                 playerTransform.position = Vector3.Lerp(startPos, sleepPoint.position, smoothProgress);
                 playerTransform.rotation = Quaternion.Slerp(startRot, targetRot, smoothProgress);
             }
 
-            // Göz kapanma (Fade) etkisi
+            
             if (fadeCanvasGroup != null)
             {
                 fadeCanvasGroup.alpha = smoothProgress;

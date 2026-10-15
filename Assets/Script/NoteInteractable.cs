@@ -7,10 +7,9 @@ public class NoteInteractable : MonoBehaviour
     public NoteManager noteManager;
 
     [Header("4. Kapı Bağlantısı")]
-    public DoorController door4Controller; // 4. Kapının üzerindeki script
-
+    public DoorController door4Controller; 
     private bool isPlayerNearby = false;
-    private bool isAlreadyRead = false; // Tek kullanım kontrolü
+    private bool isAlreadyRead = false; 
 
     private void OnTriggerEnter(Collider other)
     {
@@ -30,14 +29,14 @@ public class NoteInteractable : MonoBehaviour
 
     private void Update()
     {
-        // 1. Alternatif: Yakındayken E'ye basarak okuma
+       
         if (isPlayerNearby && Input.GetKeyDown(KeyCode.E))
         {
             ReadNote();
         }
     }
 
-    // 2. Alternatif: Mousela nota tıklandığında okuma
+   
     private void OnMouseDown()
     {
         ReadNote();
@@ -45,19 +44,19 @@ public class NoteInteractable : MonoBehaviour
 
     private void ReadNote()
     {
-        // Eğer not daha önce okunduysa bir daha çalışmaz
+        
         if (isAlreadyRead) return;
 
         if (noteManager != null)
         {
             noteManager.ShowNote(noteMessage);
-            isAlreadyRead = true; // Tekrar okunmasını engeller
+            isAlreadyRead = true; 
 
-            // 4. Kapının kilidini aç
+           
             if (door4Controller != null)
             {
                 door4Controller.UnlockDoor4();
-                Debug.Log("4. Kapının kilidi açıldı!");
+               
             }
         }
     }

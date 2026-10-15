@@ -7,7 +7,7 @@ public class LaptopController : MonoBehaviour
 
     [Header("Ekran / Menteşe Ayarları")]
     public Transform screenTransform;
-    public float closedAngleX = -110f; // Laptop kapağının öne doğru tam kapanma açısı (-110° veya -90°)
+    public float closedAngleX = -110f; 
     public float speed = 3f;
 
     private bool isPlayerNear = false;
@@ -20,10 +20,10 @@ public class LaptopController : MonoBehaviour
         if (screenTransform == null)
             screenTransform = transform;
 
-        // Başlangıçtaki açık durum rotasyonunu kaydet
+        
         openRotation = screenTransform.localRotation;
 
-        // Eksi X ekseni yönünde kapanma açısını hesapla
+        
         closedRotation = openRotation * Quaternion.Euler(closedAngleX, 0f, 0f);
 
         if (interactUI != null)

@@ -10,7 +10,7 @@ public class SceneTransitionTrigger : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            // Siyah kapıdan geçildiğini hafızaya alıyoruz
+            
             GameSession.hasWokenUpFromDoor = true;
 
             SceneManager.LoadScene(targetSceneName);

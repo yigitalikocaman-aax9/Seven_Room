@@ -14,8 +14,8 @@ public class LightswitchInteraction : MonoBehaviour
     [SerializeField] private Vector3 moveDirection = Vector3.forward;
 
     [Header("Gerekli Referanslar")]
-    [SerializeField] private GameObject noteObject;     // Düğmenin arkasındaki Not
-    [SerializeField] private Collider wallCollider;     // Duvardaki Collider (varsa)
+    [SerializeField] private GameObject noteObject;     
+    [SerializeField] private Collider wallCollider;     
 
     private Vector3 originalPosition;
     private bool isLifted = false;
@@ -24,7 +24,7 @@ public class LightswitchInteraction : MonoBehaviour
 
     private void Start()
     {
-        // Düğmenin duvardaki ilk pozisyonunu kaydet
+        
         originalPosition = transform.position;
 
         Collider switchCol = GetComponent<Collider>();
@@ -33,7 +33,7 @@ public class LightswitchInteraction : MonoBehaviour
             Physics.IgnoreCollision(switchCol, wallCollider, true);
         }
 
-        // Başlangıçta nota basılamasın (Düğme öne kayana kadar)
+       
         if (noteObject != null)
         {
             Collider noteCol = noteObject.GetComponent<Collider>();
@@ -73,7 +73,7 @@ public class LightswitchInteraction : MonoBehaviour
         transform.position = targetPosition;
         isLifted = isMovingForward;
 
-        // Öne kayma tamamlandığında notu aç
+       
         if (isMovingForward && noteObject != null)
         {
             Collider noteCol = noteObject.GetComponent<Collider>();
@@ -85,7 +85,7 @@ public class LightswitchInteraction : MonoBehaviour
                 noteSystem.OpenNote();
             }
         }
-        // Geri çekilme tamamlandığında collider'ı kapat
+       
         else if (!isMovingForward && noteObject != null)
         {
             Collider noteCol = noteObject.GetComponent<Collider>();

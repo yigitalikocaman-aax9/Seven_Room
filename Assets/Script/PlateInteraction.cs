@@ -19,7 +19,7 @@ public class PlateInteraction : MonoBehaviour
 
     private void Start()
     {
-        // Dünya pozisyonunu kaydet
+        
         originalPosition = transform.position;
         plateCollider = GetComponent<Collider>();
 

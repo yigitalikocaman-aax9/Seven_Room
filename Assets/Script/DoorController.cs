@@ -16,7 +16,7 @@ public class DoorController : MonoBehaviour
 
     [Header("Ses Ayarları")]
     public AudioSource audioSource;
-    public AudioClip creakSound; // Kapı gıcırdama sesi
+    public AudioClip creakSound; 
 
     private bool isNear = false;
     private bool isOpen = false;
@@ -27,21 +27,21 @@ public class DoorController : MonoBehaviour
     {
         if (doorHinge == null) doorHinge = transform;
 
-        // Dönüşü local (yerel) eksene sabitle
+        
         defaultLocalRotation = doorHinge.localRotation;
         targetLocalRotation = defaultLocalRotation * Quaternion.Euler(0, openAngle, 0);
 
         if (ePromptObject != null)
             ePromptObject.SetActive(false);
 
-        // AudioSource atanmamışsa aynı objeden otomatik çek
+        
         if (audioSource == null)
             audioSource = GetComponent<AudioSource>();
     }
 
     void Update()
     {
-        // Kapı KİLİTLİ DEĞİLSE ve oyuncu yakındaysa E'ye basılınca çalışır
+       
         if (!isLocked && isNear && Input.GetKeyDown(KeyCode.E))
         {
             ToggleDoor();
@@ -49,7 +49,7 @@ public class DoorController : MonoBehaviour
 
         Quaternion target = isOpen ? targetLocalRotation : defaultLocalRotation;
         
-        // localRotation kullanarak parent-child çakışmasını engelle
+       
         doorHinge.localRotation = Quaternion.Slerp(doorHinge.localRotation, target, Time.deltaTime * speed);
     }
 
@@ -57,7 +57,7 @@ public class DoorController : MonoBehaviour
     {
         isOpen = !isOpen;
 
-        // Kapı tetiklendiğinde gıcırtı sesini çal
+       
         if (audioSource != null && creakSound != null)
         {
             audioSource.PlayOneShot(creakSound);
@@ -99,19 +99,19 @@ public class DoorController : MonoBehaviour
         }
     }
 
-    // --- NOT OKUNDUĞUNDA ÇAĞRILACAK METHOTLAR ---
+   
     public void UnlockDoor()
     {
         isLocked = false;
 
-        // Eğer oyuncu zaten kapının collider'ı içindeyse E butonunu anında görünür yap
+        
         if (isNear && ePromptObject != null)
         {
             ePromptObject.SetActive(true);
         }
     }
 
-    // 4. Kapı/Siyah kapı için: Hem kilidi açar hem de kapıyı fiziken açar
+   
     public void UnlockDoor4()
     {
         UnlockDoor();

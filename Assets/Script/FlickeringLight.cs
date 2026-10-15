@@ -5,13 +5,13 @@ public class FlickeringLight : MonoBehaviour
 {
     [Header("Bileşenler")]
     public Light targetLight;
-    public MeshRenderer targetRenderer; // Floresan tüpü
-    public MeshRenderer wallRenderer;   // Kapının üstündeki duvar (Varsa)
+    public MeshRenderer targetRenderer; 
+    public MeshRenderer wallRenderer;   
 
     [Header("Kırpışma Ayarları")]
     public float minWaitTime = 0.02f;
     public float maxWaitTime = 0.15f;
-    public float maxIntensity = 5f; // Yüksek tutarak baked lekeyi baskılarız
+    public float maxIntensity = 5f; 
 
     private Material targetMaterial;
     private static readonly int EmissionColor = Shader.PropertyToID("_EmissionColor");
@@ -41,13 +41,13 @@ public class FlickeringLight : MonoBehaviour
 
             if (isOn)
             {
-                // Işık açıldığında yüksek şiddette vurur
+               
                 if (targetLight != null) targetLight.intensity = maxIntensity;
                 if (targetMaterial != null) targetMaterial.SetColor(EmissionColor, baseEmissionColor);
             }
             else
             {
-                // Işık kapandığında alanı tamamen gölgede bırakır
+               
                 if (targetLight != null) targetLight.intensity = 0f;
                 if (targetMaterial != null) targetMaterial.SetColor(EmissionColor, Color.black);
             }
